@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicoAI — AI & Automation cho Sale Bất Động Sản</title>
+    <meta name="description" content="Tự động hóa quy trình bán hàng bất động sản bằng AI. Tiết kiệm 55 tiếng mỗi tháng. Gặp thêm khách, chốt thêm deal.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #0d1321;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2332;
+            --text-primary: #f0f4f8;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-teal: #00e5a0;
+            --accent-teal-dim: rgba(0, 229, 160, 0.15);
+            --accent-teal-glow: rgba(0, 229, 160, 0.3);
+            --accent-cyan: #06b6d4;
+            --accent-coral: #f87171;
+            --accent-orange: #fb923c;
+            --gradient-main: linear-gradient(135deg, #00e5a0, #06b6d4);
+            --gradient-bg: linear-gradient(180deg, #0a0e17 0%, #0d1a2d 50%, #0a0e17 100%);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ===== UTILITY ===== */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+        }
+
+        .gradient-text {
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .highlight {
+            color: var(--accent-teal);
+            font-weight: 700;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-teal);
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 20px;
+        }
+
+        .section-desc {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 620px;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px var(--accent-teal-glow); }
+            50% { box-shadow: 0 0 40px var(--accent-teal-glow), 0 0 80px rgba(0, 229, 160, 0.1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(10, 14, 23, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 0;
+        }
+
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-cta {
+            padding: 10px 28px;
+            background: var(--gradient-main);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-teal-glow);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 80px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-teal-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: var(--accent-teal-dim);
+            border: 1px solid rgba(0, 229, 160, 0.25);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-teal);
+            margin-bottom: 32px;
+            animation: fadeUp 0.6s ease;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-teal);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            animation: fadeUp 0.6s ease 0.1s both;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            animation: fadeUp 0.6s ease 0.2s both;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeUp 0.6s ease 0.3s both;
+        }
+
+        .btn-primary {
+            padding: 16px 40px;
+            background: var(--gradient-main);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px var(--accent-teal-glow);
+        }
+
+        .btn-secondary {
+            padding: 16px 40px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 64px;
+            animation: fadeUp 0.6s ease 0.4s both;
+        }
+
+        .hero-stat-number {
+            font-size: 2.4rem;
+            font-weight: 900;
+            display: block;
+        }
+
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ===== PAIN SECTION ===== */
+        .pain-section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .pain-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .pain-header .section-desc {
+            margin: 0 auto;
+        }
+
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .pain-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pain-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-coral);
+            opacity: 0.6;
+        }
+
+        .pain-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            border-color: rgba(248, 113, 113, 0.2);
+        }
+
+        .pain-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+
+        .pain-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .pain-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .pain-time {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 14px;
+            background: rgba(248, 113, 113, 0.12);
+            color: var(--accent-coral);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* ===== SOLUTION ===== */
+        .solution-section {
+            padding: 120px 0;
+            background: var(--gradient-bg);
+            position: relative;
+        }
+
+        .solution-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .solution-header .section-desc {
+            margin: 0 auto;
+        }
+
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .solution-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-main);
+        }
+
+        .solution-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            border-color: rgba(0, 229, 160, 0.15);
+            box-shadow: 0 8px 40px rgba(0, 229, 160, 0.08);
+        }
+
+        .solution-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--accent-teal-dim);
+            color: var(--accent-teal);
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .solution-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .solution-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .solution-badge {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 14px;
+            background: var(--accent-teal-dim);
+            color: var(--accent-teal);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* ===== STATS ===== */
+        .stats-section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 48px 24px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(0, 229, 160, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .stat-number {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-unit {
+            font-size: 1rem;
+            color: var(--accent-teal);
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* ===== COMPARISON ===== */
+        .comparison-section {
+            padding: 120px 0;
+            background: var(--gradient-bg);
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .comparison-table {
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-row.header {
+            background: rgba(0, 229, 160, 0.08);
+        }
+
+        .comparison-cell {
+            padding: 18px 24px;
+            font-size: 0.95rem;
+        }
+
+        .comparison-row.header .comparison-cell {
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .comparison-cell:nth-child(2) {
+            text-align: center;
+            color: var(--accent-coral);
+            background: rgba(248, 113, 113, 0.04);
+        }
+
+        .comparison-cell:nth-child(3) {
+            text-align: center;
+            color: var(--accent-teal);
+            background: rgba(0, 229, 160, 0.04);
+        }
+
+        .comparison-row.header .comparison-cell:nth-child(2) {
+            color: var(--accent-coral);
+        }
+
+        .comparison-row.header .comparison-cell:nth-child(3) {
+            color: var(--accent-teal);
+        }
+
+        /* ===== LEAD MAGNET / CTA ===== */
+        .cta-section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .cta-box {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 64px 48px;
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 229, 160, 0.15);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, var(--accent-teal-dim) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .cta-box > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .cta-box h2 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .cta-box .section-desc {
+            margin: 0 auto 32px;
+        }
+
+        .cta-form {
+            display: flex;
+            gap: 12px;
+            max-width: 500px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .cta-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-input:focus {
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 0 3px var(--accent-teal-dim);
+        }
+
+        .cta-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .cta-submit {
+            padding: 16px 36px;
+            background: var(--gradient-main);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .cta-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-teal-glow);
+        }
+
+        .cta-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        .cta-features {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .cta-feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .cta-feature .check {
+            color: var(--accent-teal);
+            font-weight: bold;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            padding: 48px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            text-align: center;
+        }
+
+        .footer-brand {
+            font-size: 1.3rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .footer-tagline {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-teal);
+        }
+
+        /* ===== SUCCESS MESSAGE ===== */
+        .success-message {
+            display: none;
+            padding: 20px;
+            background: var(--accent-teal-dim);
+            border: 1px solid rgba(0, 229, 160, 0.3);
+            border-radius: var(--radius-sm);
+            color: var(--accent-teal);
+            font-weight: 600;
+            margin-top: 16px;
+            animation: fadeUp 0.4s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero-stats {
+                gap: 24px;
+            }
+
+            .hero-stat-number {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 32px 20px;
+            }
+
+            .pain-grid, .solution-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-row {
+                grid-template-columns: 1.5fr 1fr 1fr;
+            }
+
+            .comparison-cell {
+                padding: 12px 10px;
+                font-size: 0.82rem;
+            }
+
+            .cta-box {
+                padding: 40px 24px;
+            }
+
+            .cta-form {
+                flex-direction: column;
+            }
+
+            .cta-submit {
+                width: 100%;
+            }
+
+            .hero-cta-group {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <span class="gradient-text">PICOAI</span>
+            </div>
+            <a href="#cta" class="nav-cta">Nhận Tài Liệu Miễn Phí</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    AI & Automation cho Sale BĐS
+                </div>
+                <h1>
+                    Bán <span class="gradient-text">Thông Minh Hơn</span>,<br>
+                    Không Phải Chăm Hơn.
+                </h1>
+                <p class="hero-subtitle">
+                    Tự động hóa quy trình bán hàng bất động sản bằng AI. 
+                    Tiết kiệm <strong>55 tiếng mỗi tháng</strong> — để gặp thêm khách và chốt thêm deal.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="#cta" class="btn-primary">
+                        🚀 Nhận Bộ Prompt Miễn Phí
+                    </a>
+                    <a href="#painpoints" class="btn-secondary">
+                        Tìm hiểu thêm ↓
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <span class="hero-stat-number gradient-text" data-target="55">0</span>
+                        <div class="hero-stat-label">Tiếng tiết kiệm/tháng</div>
+                    </div>
+                    <div>
+                        <span class="hero-stat-number gradient-text" data-target="5">0</span>
+                        <div class="hero-stat-label">Công việc tự động</div>
+                    </div>
+                    <div>
+                        <span class="hero-stat-number gradient-text" data-target="3">0</span>
+                        <div class="hero-stat-label">Phút thay vì 3 tiếng</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAIN POINTS -->
+    <section class="pain-section" id="painpoints">
+        <div class="container">
+            <div class="pain-header animate-on-scroll">
+                <div class="section-label">Vấn đề</div>
+                <h2 class="section-title">Bạn Đang Lãng Phí <span class="highlight">3 Tiếng</span> Mỗi Ngày</h2>
+                <p class="section-desc">80% sale BĐS dành phần lớn thời gian cho công việc lặp lại — thay vì gặp khách và chốt deal.</p>
+            </div>
+            <div class="pain-grid">
+                <div class="pain-card animate-on-scroll">
+                    <div class="pain-icon">✍️</div>
+                    <h3>Soạn tin đăng thủ công</h3>
+                    <p>Mở file mẫu → copy → sửa thông tin → chỉnh câu từ cho từng nền tảng.</p>
+                    <span class="pain-time">⏱ 30-45 phút/tin</span>
+                </div>
+                <div class="pain-card animate-on-scroll">
+                    <div class="pain-icon">💬</div>
+                    <h3>Chat trả lời lặp lại</h3>
+                    <p>"Giá bao nhiêu?", "Có bank hỗ trợ không?", "Pháp lý thế nào?" — ngày nào cũng vậy.</p>
+                    <span class="pain-time">⏱ 1-2 tiếng/ngày</span>
+                </div>
+                <div class="pain-card animate-on-scroll">
+                    <div class="pain-icon">📋</div>
+                    <h3>Phân loại khách bằng tay</h3>
+                    <p>Ghi chú vào sổ tay hoặc Google Sheet — quên update, không biết ai nóng ai lạnh.</p>
+                    <span class="pain-time">⏱ 30 phút/ngày</span>
+                </div>
+                <div class="pain-card animate-on-scroll">
+                    <div class="pain-icon">📞</div>
+                    <h3>Quên follow-up</h3>
+                    <p>Hẹn gọi lại → quên → khách mua bên khác. Mất deal vì QUÊN, không phải vì kém.</p>
+                    <span class="pain-time">⏱ Mất deal liên tục</span>
+                </div>
+                <div class="pain-card animate-on-scroll">
+                    <div class="pain-icon">📊</div>
+                    <h3>Báo cáo cuối tuần</h3>
+                    <p>Ngồi tổng hợp: bao nhiêu cuộc gọi, bao nhiêu khách, bao nhiêu deal — data luôn sai.</p>
+                    <span class="pain-time">⏱ 1-2 tiếng/tuần</span>
+                </div>
+                <div class="pain-card animate-on-scroll">
+                    <div class="pain-icon">😰</div>
+                    <h3>Kiệt sức & mất động lực</h3>
+                    <p>Làm 12 tiếng/ngày mà vẫn không đủ thời gian. Bận rộn ≠ hiệu quả.</p>
+                    <span class="pain-time">⏱ Burnout</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTIONS -->
+    <section class="solution-section" id="solutions">
+        <div class="container">
+            <div class="solution-header animate-on-scroll">
+                <div class="section-label">Giải pháp</div>
+                <h2 class="section-title">AI Giải Quyết Trong <span class="gradient-text">5 Phút</span></h2>
+                <p class="section-desc">PicoAI giúp bạn tự động hóa 5 công việc lặp lại — để tập trung vào việc quan trọng nhất: chốt deal.</p>
+            </div>
+            <div class="solution-grid">
+                <div class="solution-card animate-on-scroll">
+                    <div class="solution-number">01</div>
+                    <h3>AI viết tin đăng BĐS</h3>
+                    <p>Paste thông tin dự án → AI viết 3 phiên bản tối ưu cho Facebook, Zalo, Batdongsan.com.vn</p>
+                    <span class="solution-badge">3 phút thay vì 45 phút</span>
+                </div>
+                <div class="solution-card animate-on-scroll">
+                    <div class="solution-number">02</div>
+                    <h3>Chatbot trả lời 24/7</h3>
+                    <p>Setup chatbot tự động trả lời câu hỏi khách hàng trên Zalo/Messenger — chính xác, không bỏ sót.</p>
+                    <span class="solution-badge">5 phút setup</span>
+                </div>
+                <div class="solution-card animate-on-scroll">
+                    <div class="solution-number">03</div>
+                    <h3>Lead scoring tự động</h3>
+                    <p>Hệ thống chấm điểm theo hành vi khách: NÓNG 🔴 ẤM 🟡 LẠNH 🔵 — không bỏ lỡ ai.</p>
+                    <span class="solution-badge">Tự động 100%</span>
+                </div>
+                <div class="solution-card animate-on-scroll">
+                    <div class="solution-number">04</div>
+                    <h3>Follow-up tự động 30 ngày</h3>
+                    <p>Chuỗi tin nhắn tự động: gửi thông tin → hỏi thăm → mời xem nhà → re-engage.</p>
+                    <span class="solution-badge">Không mất deal vì quên</span>
+                </div>
+                <div class="solution-card animate-on-scroll">
+                    <div class="solution-number">05</div>
+                    <h3>Dashboard báo cáo real-time</h3>
+                    <p>Số lead, tỷ lệ chuyển đổi, doanh số dự kiến — báo cáo tự động gửi Zalo mỗi sáng T2.</p>
+                    <span class="solution-badge">Miễn phí với Google Sheet</span>
+                </div>
+                <div class="solution-card animate-on-scroll">
+                    <div class="solution-number">✨</div>
+                    <h3>Và nhiều hơn nữa...</h3>
+                    <p>Mỗi tuần PicoAI chia sẻ thêm các workflow, template, và hướng dẫn mới nhất.</p>
+                    <span class="solution-badge">Cập nhật liên tục</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-number gradient-text">55h</div>
+                    <div class="stat-unit">mỗi tháng</div>
+                    <div class="stat-label">Thời gian tiết kiệm cho sale BĐS</div>
+                </div>
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-number gradient-text">3x</div>
+                    <div class="stat-unit">hiệu suất</div>
+                    <div class="stat-label">Gặp nhiều khách hàng hơn</div>
+                </div>
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-number gradient-text">24/7</div>
+                    <div class="stat-unit">hoạt động</div>
+                    <div class="stat-label">Chatbot không ngủ, không nghỉ</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPARISON TABLE -->
+    <section class="comparison-section">
+        <div class="container">
+            <div class="comparison-header animate-on-scroll">
+                <div class="section-label">So sánh</div>
+                <h2 class="section-title">Sale Truyền Thống vs <span class="gradient-text">Sale AI</span></h2>
+            </div>
+            <div class="comparison-table animate-on-scroll">
+                <div class="comparison-row header">
+                    <div class="comparison-cell">Công việc</div>
+                    <div class="comparison-cell">❌ Thủ công</div>
+                    <div class="comparison-cell">✅ Với AI</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">Soạn tin đăng</div>
+                    <div class="comparison-cell">30-45 phút</div>
+                    <div class="comparison-cell">3 phút</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">Trả lời chat khách</div>
+                    <div class="comparison-cell">1-2 tiếng/ngày</div>
+                    <div class="comparison-cell">Tự động 24/7</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">Phân loại khách hàng</div>
+                    <div class="comparison-cell">30 phút/ngày</div>
+                    <div class="comparison-cell">Tự động</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">Follow-up</div>
+                    <div class="comparison-cell">Hay quên</div>
+                    <div class="comparison-cell">Không bỏ sót</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell">Báo cáo</div>
+                    <div class="comparison-cell">1-2 tiếng/tuần</div>
+                    <div class="comparison-cell">Real-time</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell"><strong>TỔNG</strong></div>
+                    <div class="comparison-cell"><strong>3 tiếng/ngày</strong></div>
+                    <div class="comparison-cell"><strong>15 phút</strong></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / LEAD MAGNET -->
+    <section class="cta-section" id="cta">
+        <div class="container">
+            <div class="cta-box animate-on-scroll">
+                <div class="cta-icon">🎁</div>
+                <h2>Nhận Miễn Phí:<br><span class="gradient-text">Bộ 10 Prompt AI cho Sale BĐS</span></h2>
+                <p class="section-desc">
+                    10 prompt được tối ưu để viết tin đăng, trả lời khách, soạn kịch bản telesale — áp dụng ngay trong 5 phút.
+                </p>
+
+                <form class="cta-form" id="leadForm">
+                    <input type="text" class="cta-input" id="nameInput" placeholder="Tên của bạn" required>
+                    <input type="tel" class="cta-input" id="phoneInput" placeholder="Số điện thoại / Zalo" required>
+                    <button type="submit" class="cta-submit">Nhận Ngay →</button>
+                </form>
+
+                <div class="success-message" id="successMsg">
+                    ✅ Cảm ơn bạn! Kiểm tra Zalo để nhận bộ prompt. Chào mừng đến với PicoAI! 🎉
+                </div>
+
+                <p class="cta-note">🔒 Thông tin được bảo mật. Không spam.</p>
+
+                <div class="cta-features">
+                    <div class="cta-feature"><span class="check">✓</span> Miễn phí 100%</div>
+                    <div class="cta-feature"><span class="check">✓</span> Gửi qua Zalo</div>
+                    <div class="cta-feature"><span class="check">✓</span> Áp dụng ngay</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-brand gradient-text">PICOAI</div>
+            <p class="footer-tagline">Bán thông minh hơn, không phải chăm hơn.</p>
+            <div class="footer-links">
+                <a href="#">Facebook</a>
+                <a href="#">Zalo</a>
+                <a href="#">TikTok</a>
+                <a href="#">Email</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== NAVBAR SCROLL EFFECT =====
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ===== ANIMATE ON SCROLL =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+        // ===== COUNTER ANIMATION =====
+        const counters = document.querySelectorAll('[data-target]');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.dataset.target);
+                    let current = 0;
+                    const duration = 1500;
+                    const step = target / (duration / 16);
+
+                    const updateCounter = () => {
+                        current += step;
+                        if (current < target) {
+                            entry.target.textContent = Math.round(current);
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            entry.target.textContent = target;
+                        }
+                    };
+                    updateCounter();
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(c => counterObserver.observe(c));
+
+        // ===== FORM SUBMIT =====
+        document.getElementById('leadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('nameInput').value;
+            const phone = document.getElementById('phoneInput').value;
+
+            if (name && phone) {
+                this.style.display = 'none';
+                document.getElementById('successMsg').classList.add('show');
+                
+                // Log lead (replace with actual webhook/API)
+                console.log('New lead:', { name, phone, timestamp: new Date().toISOString() });
+            }
+        });
+
+        // ===== SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
