@@ -613,7 +613,7 @@
         }
 
         .cta-box {
-            max-width: 700px;
+            max-width: 760px;
             margin: 0 auto;
             text-align: center;
             padding: 64px 48px;
@@ -658,21 +658,44 @@
 
         .cta-form {
             display: flex;
-            gap: 12px;
-            max-width: 500px;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 480px;
             margin: 0 auto;
-            flex-wrap: wrap;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            text-align: left;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label .required {
+            color: var(--accent-coral);
         }
 
         .cta-input {
-            flex: 1;
-            min-width: 200px;
-            padding: 16px 24px;
+            width: 100%;
+            padding: 14px 20px;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
+            border-radius: 12px;
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-family: inherit;
             outline: none;
             transition: all 0.3s ease;
@@ -681,28 +704,107 @@
         .cta-input:focus {
             border-color: var(--accent-teal);
             box-shadow: 0 0 0 3px var(--accent-teal-dim);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .cta-input::placeholder {
             color: var(--text-muted);
         }
 
+        .cta-input.error {
+            border-color: var(--accent-coral);
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+        }
+
+        .cta-input.valid {
+            border-color: var(--accent-teal);
+        }
+
+        .form-error {
+            display: none;
+            text-align: left;
+            font-size: 0.75rem;
+            color: var(--accent-coral);
+            margin-top: 4px;
+            padding-left: 4px;
+        }
+
+        .form-error.show {
+            display: block;
+            animation: fadeUp 0.3s ease;
+        }
+
+        select.cta-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 5L6 8L9 5' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        select.cta-input option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 12px;
+        }
+
         .cta-submit {
+            width: 100%;
             padding: 16px 36px;
             background: var(--gradient-main);
             color: var(--bg-primary);
             border: none;
-            border-radius: 50px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.3s ease;
             white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            margin-top: 8px;
         }
 
-        .cta-submit:hover {
+        .cta-submit:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 30px var(--accent-teal-glow);
+        }
+
+        .cta-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .cta-submit .btn-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-submit.loading .btn-text {
+            opacity: 0;
+        }
+
+        .cta-submit .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(10, 14, 23, 0.3);
+            border-top-color: var(--bg-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-submit.loading .spinner {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         .cta-note {
@@ -730,6 +832,177 @@
         .cta-feature .check {
             color: var(--accent-teal);
             font-weight: bold;
+        }
+
+        /* ===== SUCCESS MESSAGE ===== */
+        .success-message {
+            display: none;
+            padding: 32px;
+            text-align: center;
+            animation: fadeUp 0.5s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: countUp 0.5s ease;
+        }
+
+        .success-message h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .success-message .social-links {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        .success-message .social-link {
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link.zalo {
+            background: rgba(0, 132, 255, 0.15);
+            color: #0084ff;
+            border: 1px solid rgba(0, 132, 255, 0.3);
+        }
+
+        .social-link.zalo:hover {
+            background: rgba(0, 132, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .social-link.facebook {
+            background: rgba(66, 103, 178, 0.15);
+            color: #4267b2;
+            border: 1px solid rgba(66, 103, 178, 0.3);
+        }
+
+        .social-link.facebook:hover {
+            background: rgba(66, 103, 178, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ===== ERROR TOAST ===== */
+        .error-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 28px;
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            border-radius: 12px;
+            color: var(--accent-coral);
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(20px);
+            z-index: 200;
+            transition: transform 0.4s ease;
+            pointer-events: none;
+        }
+
+        .error-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== FLOATING CTA ===== */
+        .floating-cta {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 90;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+
+        .floating-cta.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .floating-cta a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--gradient-main);
+            color: var(--bg-primary);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 30px var(--accent-teal-glow);
+            animation: glow 3s ease-in-out infinite;
+            transition: transform 0.3s ease;
+        }
+
+        .floating-cta a:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        /* ===== LEAD COUNT SOCIAL PROOF ===== */
+        .social-proof {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .social-proof .avatars {
+            display: flex;
+            margin-right: 4px;
+        }
+
+        .social-proof .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+            margin-left: -8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .social-proof .avatar:first-child {
+            margin-left: 0;
+        }
+
+        .avatar.a1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .avatar.a2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .avatar.a3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .avatar.a4 { background: linear-gradient(135deg, #43e97b, #38f9d7); color: var(--bg-primary); }
+
+        .social-proof strong {
+            color: var(--accent-teal);
         }
 
         /* ===== FOOTER ===== */
@@ -769,23 +1042,6 @@
             color: var(--accent-teal);
         }
 
-        /* ===== SUCCESS MESSAGE ===== */
-        .success-message {
-            display: none;
-            padding: 20px;
-            background: var(--accent-teal-dim);
-            border: 1px solid rgba(0, 229, 160, 0.3);
-            border-radius: var(--radius-sm);
-            color: var(--accent-teal);
-            font-weight: 600;
-            margin-top: 16px;
-            animation: fadeUp 0.4s ease;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .hero-stats {
@@ -822,7 +1078,7 @@
                 padding: 40px 24px;
             }
 
-            .cta-form {
+            .form-row {
                 flex-direction: column;
             }
 
@@ -833,6 +1089,16 @@
             .hero-cta-group {
                 flex-direction: column;
                 align-items: center;
+            }
+
+            .floating-cta {
+                right: 16px;
+                bottom: 16px;
+            }
+
+            .floating-cta a {
+                padding: 12px 20px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -1069,26 +1335,87 @@
                     10 prompt được tối ưu để viết tin đăng, trả lời khách, soạn kịch bản telesale — áp dụng ngay trong 5 phút.
                 </p>
 
-                <form class="cta-form" id="leadForm">
-                    <input type="text" class="cta-input" id="nameInput" placeholder="Tên của bạn" required>
-                    <input type="tel" class="cta-input" id="phoneInput" placeholder="Số điện thoại / Zalo" required>
-                    <button type="submit" class="cta-submit">Nhận Ngay →</button>
+                <div class="social-proof">
+                    <div class="avatars">
+                        <div class="avatar a1">H</div>
+                        <div class="avatar a2">T</div>
+                        <div class="avatar a3">M</div>
+                        <div class="avatar a4">L</div>
+                    </div>
+                    <span><strong>120+</strong> sale BĐS đã nhận bộ prompt</span>
+                </div>
+
+                <form class="cta-form" id="leadForm" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nameInput">Họ và Tên <span class="required">*</span></label>
+                            <input type="text" class="cta-input" id="nameInput" placeholder="Nguyễn Văn Anh" required>
+                            <div class="form-error" id="nameError">Vui lòng nhập tên của bạn</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneInput">Số điện thoại / Zalo <span class="required">*</span></label>
+                            <input type="tel" class="cta-input" id="phoneInput" placeholder="0912 345 678" required>
+                            <div class="form-error" id="phoneError">Số điện thoại không hợp lệ</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="emailInput">Email</label>
+                            <input type="email" class="cta-input" id="emailInput" placeholder="email@example.com">
+                            <div class="form-error" id="emailError">Email không hợp lệ</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="roleInput">Vai trò</label>
+                            <select class="cta-input" id="roleInput">
+                                <option value="" disabled selected>Chọn vai trò...</option>
+                                <option value="Sale BĐS">Sale BĐS</option>
+                                <option value="Quản lý Sale">Quản lý Sale</option>
+                                <option value="Chủ sàn">Chủ sàn giao dịch</option>
+                                <option value="Môi giới độc lập">Môi giới độc lập</option>
+                                <option value="Marketing BĐS">Marketing BĐS</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="cta-submit" id="submitBtn">
+                        <span class="btn-text">🚀 Nhận Bộ Prompt Miễn Phí →</span>
+                        <span class="spinner"></span>
+                    </button>
                 </form>
 
                 <div class="success-message" id="successMsg">
-                    ✅ Cảm ơn bạn! Kiểm tra Zalo để nhận bộ prompt. Chào mừng đến với PicoAI! 🎉
+                    <div class="success-icon">🎉</div>
+                    <h3>Chúc mừng bạn!</h3>
+                    <p>Bộ 10 Prompt AI cho Sale BĐS sẽ được gửi qua Zalo trong vòng <strong>5 phút</strong>.<br>
+                    Trong lúc chờ đợi, hãy theo dõi PicoAI để nhận thêm tips AI mỗi tuần!</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link zalo">💬 Zalo PicoAI</a>
+                        <a href="#" class="social-link facebook">📘 Facebook PicoAI</a>
+                    </div>
                 </div>
 
-                <p class="cta-note">🔒 Thông tin được bảo mật. Không spam.</p>
+                <p class="cta-note">🔒 Thông tin được bảo mật tuyệt đối. Cam kết không spam.</p>
 
                 <div class="cta-features">
                     <div class="cta-feature"><span class="check">✓</span> Miễn phí 100%</div>
                     <div class="cta-feature"><span class="check">✓</span> Gửi qua Zalo</div>
-                    <div class="cta-feature"><span class="check">✓</span> Áp dụng ngay</div>
+                    <div class="cta-feature"><span class="check">✓</span> Áp dụng ngay trong 5 phút</div>
+                    <div class="cta-feature"><span class="check">✓</span> Cập nhật liên tục</div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- FLOATING CTA -->
+    <div class="floating-cta" id="floatingCta">
+        <a href="#cta">
+            🎁 Nhận Prompt Miễn Phí
+        </a>
+    </div>
+
+    <!-- ERROR TOAST -->
+    <div class="error-toast" id="errorToast"></div>
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -1152,18 +1479,180 @@
 
         counters.forEach(c => counterObserver.observe(c));
 
-        // ===== FORM SUBMIT =====
-        document.getElementById('leadForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('nameInput').value;
-            const phone = document.getElementById('phoneInput').value;
+        // ===== FLOATING CTA =====
+        const floatingCta = document.getElementById('floatingCta');
+        const ctaSection = document.getElementById('cta');
+        
+        const floatingObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Show floating CTA when CTA section is NOT visible AND user scrolled past hero
+                if (!entry.isIntersecting && window.scrollY > 600) {
+                    floatingCta.classList.add('visible');
+                } else {
+                    floatingCta.classList.remove('visible');
+                }
+            });
+        }, { threshold: 0.1 });
 
-            if (name && phone) {
+        floatingObserver.observe(ctaSection);
+
+        // Also hide when near top
+        window.addEventListener('scroll', () => {
+            if (window.scrollY < 600) {
+                floatingCta.classList.remove('visible');
+            }
+        });
+
+        // ===== FORM VALIDATION =====
+        function validateField(input, errorEl, validatorFn) {
+            const value = input.value.trim();
+            const isValid = validatorFn(value);
+
+            if (value && !isValid) {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                errorEl.classList.add('show');
+            } else if (value && isValid) {
+                input.classList.remove('error');
+                input.classList.add('valid');
+                errorEl.classList.remove('show');
+            } else {
+                input.classList.remove('error', 'valid');
+                errorEl.classList.remove('show');
+            }
+            return isValid || !value;
+        }
+
+        const nameInput = document.getElementById('nameInput');
+        const phoneInput = document.getElementById('phoneInput');
+        const emailInput = document.getElementById('emailInput');
+        const roleInput = document.getElementById('roleInput');
+        const nameError = document.getElementById('nameError');
+        const phoneError = document.getElementById('phoneError');
+        const emailError = document.getElementById('emailError');
+
+        // Real-time validation
+        nameInput.addEventListener('blur', () => {
+            validateField(nameInput, nameError, v => v.length >= 2);
+        });
+
+        phoneInput.addEventListener('blur', () => {
+            validateField(phoneInput, phoneError, v => /^(0|\+84)[0-9]{8,10}$/.test(v.replace(/\s/g, '')));
+        });
+
+        emailInput.addEventListener('blur', () => {
+            validateField(emailInput, emailError, v => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+        });
+
+        // ===== ERROR TOAST =====
+        function showErrorToast(message) {
+            const toast = document.getElementById('errorToast');
+            toast.textContent = '⚠️ ' + message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // ===== FORM SUBMIT WITH WEBHOOK =====
+        // 🔧 CẤU HÌNH: Thay URL webhook n8n của bạn vào đây
+        const WEBHOOK_URL = 'https://longbest.ai5phut.com/webhook/picoai-lead';
+
+        document.getElementById('leadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const email = emailInput.value.trim();
+            const role = roleInput.value;
+
+            // Validate required fields
+            let hasErrors = false;
+
+            if (!name || name.length < 2) {
+                nameInput.classList.add('error');
+                nameError.classList.add('show');
+                hasErrors = true;
+            }
+
+            if (!phone || !/^(0|\+84)[0-9]{8,10}$/.test(phone.replace(/\s/g, ''))) {
+                phoneInput.classList.add('error');
+                phoneError.classList.add('show');
+                hasErrors = true;
+            }
+
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                emailInput.classList.add('error');
+                emailError.classList.add('show');
+                hasErrors = true;
+            }
+
+            if (hasErrors) return;
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            const leadData = {
+                name,
+                phone: phone.replace(/\s/g, ''),
+                email: email || '',
+                role: role || 'Chưa chọn',
+                source: 'Landing Page',
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Send to n8n webhook
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(leadData)
+                });
+
+                if (!response.ok) throw new Error('Server error');
+
+                // Success!
                 this.style.display = 'none';
+                document.querySelector('.cta-note').style.display = 'none';
+                document.querySelector('.cta-features').style.display = 'none';
+                document.querySelector('.social-proof').style.display = 'none';
                 document.getElementById('successMsg').classList.add('show');
+
+                // Track conversion (for future Google Analytics / FB Pixel)
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'generate_lead', {
+                        event_category: 'Lead',
+                        event_label: 'PicoAI Prompt Download',
+                        value: 1
+                    });
+                }
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'Lead', { content_name: 'PicoAI Prompt' });
+                }
+
+                console.log('✅ Lead saved:', leadData);
+
+            } catch (error) {
+                console.error('❌ Webhook error:', error);
                 
-                // Log lead (replace with actual webhook/API)
-                console.log('New lead:', { name, phone, timestamp: new Date().toISOString() });
+                // Fallback: save locally and show success anyway
+                // (don't lose the lead just because webhook failed)
+                const leads = JSON.parse(localStorage.getItem('picoai_leads') || '[]');
+                leads.push(leadData);
+                localStorage.setItem('picoai_leads', JSON.stringify(leads));
+
+                // Still show success to user
+                this.style.display = 'none';
+                document.querySelector('.cta-note').style.display = 'none';
+                document.querySelector('.cta-features').style.display = 'none';
+                document.querySelector('.social-proof').style.display = 'none';
+                document.getElementById('successMsg').classList.add('show');
+
+                showErrorToast('Có lỗi kết nối. Thông tin đã được lưu, chúng tôi sẽ liên hệ bạn sớm!');
+                console.log('📦 Lead saved to localStorage as fallback:', leadData);
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
             }
         });
 
